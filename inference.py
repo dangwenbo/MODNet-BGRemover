@@ -155,8 +155,12 @@ class BGRemove():
             ret, frame = cap.read()
             if flag:
                 height, width, _ = frame.shape
+                # keep src video
+                # out = cv2.VideoWriter(output+output_name,
+                #                       fourcc, 20.0, (2*width, height))
+
                 out = cv2.VideoWriter(output+output_name,
-                                      fourcc, 20.0, (2*width, height))
+                                      fourcc, 20.0, (width, height))
                 flag = 0
 
             if ret:
@@ -165,10 +169,13 @@ class BGRemove():
                 im = self.pre_process(frame)
                 _, _, matte = BGRemove.modnet(im, inference=False)
                 matte = np.uint8(self.post_process(matte, background))
-                full_image = np.concatenate((frame, matte), axis=1)
-                full_image = np.uint8(cv2.resize(
-                    full_image, (2*width, height), cv2.INTER_AREA))
-                out.write(full_image)
+                # keep src video
+                # full_image = np.concatenate((frame, matte), axis=1)
+                # full_image = np.uint8(cv2.resize(
+                #     full_image, (2*width, height), cv2.INTER_AREA))
+                # out.write(full_image)
+
+                out.write(matte)
             else:
                 break
         cap.release()
